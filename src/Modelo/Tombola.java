@@ -4,13 +4,14 @@
  */
 package Modelo;
 
+import Interfaces.TombolaListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import prueba.Observer.TombolaListener;
+
 
 /**
  *
