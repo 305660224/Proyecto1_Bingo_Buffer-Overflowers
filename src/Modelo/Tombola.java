@@ -58,6 +58,14 @@ public class Tombola {
         notificarNumeroGenerado(numero);
     }
 
+    public void removerNumeroManual(int numero) { //AÑADIDO
+        if (numero < 1 || numero > 75) {
+            throw new IllegalArgumentException("El número debe estar entre 1 y el 75.");
+        }
+        if (numerosSalidos.contains(numero)) {
+             numerosSalidos.remove(numero);
+        }
+    }
     
     public void reiniciar() {
         numerosSalidos.clear();

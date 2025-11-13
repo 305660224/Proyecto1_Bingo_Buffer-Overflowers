@@ -6,6 +6,8 @@ package Vista;
 
 import Controlador.JuegoControlador;
 import Controlador.TombolaController;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JTextField;
@@ -213,14 +215,11 @@ public class TombolaGUI extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnReiniciarActionPerformed
 
     private void btnComenzarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComenzarActionPerformed
-    //    try {            JuegoControlador.getInstancia().IniciarJuego(); }
-       // catch (InterruptedException ex) {System.getLogger(TombolaGUI.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex); }
-        try {
-        JuegoControlador.getInstancia().IniciarJuego();
-    } catch (InterruptedException ex) {
-        ex.printStackTrace();
-    }
-   
+        try {   
+            JuegoControlador.getInstancia().IniciarJuego();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(TombolaGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnComenzarActionPerformed
 
     private void btnAutomaticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAutomaticoActionPerformed
@@ -233,13 +232,16 @@ public class TombolaGUI extends javax.swing.JInternalFrame {
 
     private void btnMarcarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMarcarActionPerformed
         int numero = Integer.parseInt(txtNumero.getText().trim());
-        TombolaController.getInstancia().ingresarNumeroManual(numero);
+        JuegoControlador.getInstancia().marcarNumero(numero);
 
 // JuegoControlador.getInstancia().procesarNumero(Integer.parseInt(txtNumero.getText().trim()));
     }//GEN-LAST:event_btnMarcarActionPerformed
 
     private void txtNumeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNumeroActionPerformed
-        JuegoControlador.getInstancia().procesarNumero(Integer.parseInt(txtNumero.getText().trim()));
+        int numero = Integer.parseInt(txtNumero.getText().trim());
+        JuegoControlador.getInstancia().marcarNumero(numero);
+
+//JuegoControlador.getInstancia().marcarNumero(Integer.parseInt(txtNumero.getText().trim()));
     }//GEN-LAST:event_txtNumeroActionPerformed
 
     private void btnDesmarcarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDesmarcarActionPerformed

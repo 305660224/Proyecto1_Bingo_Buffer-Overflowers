@@ -4,7 +4,6 @@
  */
 package Controlador;
 
-import Vista.TombolaGUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
@@ -17,10 +16,9 @@ import javax.swing.Timer;
 
 public class JuegoControlador {
     private static JuegoControlador instancia;
-    private TombolaGUI tombolaGUI;
-    private TableroControlador tablero;
     private boolean juegoAutomatico;
-    private TombolaController tombolaController;
+    private TableroControlador tablero;
+    private TombolaController tombola;
 
     //private Lista<CartonControlador> cartones;
     
@@ -40,8 +38,7 @@ public class JuegoControlador {
     
     // CONTRUCTOR
     private JuegoControlador() {
-        tombolaController = TombolaController.getInstancia();
-        tombolaGUI = TombolaGUI.getInstancia();
+        tombola = TombolaController.getInstancia();
         this.tablero = TableroControlador.getInstancia();
         //this.cartones = new ArrayList<>();
     }
@@ -49,28 +46,22 @@ public class JuegoControlador {
     //PUBLICOS------------------------------------------------------------------
     
     public void IniciarJuego() throws InterruptedException {
-    actualizarInterfazModo();
-    tombolaGUI.getBtnComenzar().setEnabled(false);
-    tombolaGUI.getBtnAutomatico().setEnabled(false);
-    tombolaGUI.getBtnManual().setEnabled(false);
+    tombola.iniciarTombola(juegoAutomatico);
     if(juegoAutomatico) {
-        generarNumeroAuto.start();
-     }else {
-        tombolaGUI.getBtnMarcar().setEnabled(true);
-        tombolaGUI.getBtnDesmarcar().setEnabled(true);
-        tombolaGUI.getTxtNumero().setEnabled(true);
+        juegoAutomaticoTimer.start();
+     }
     }
-    }
+    
     /**
-     * Marca numero en tablero y cartones :p
-     * @param numero Número a procesar
+     * Desmarca un número del tablero y cartones (solo si el juego esta en manual);
+     * @param numero
      */
-    public void procesarNumero(int numero) {
+    public void marcarNumero(int numero) {
         if (numero < 1 || numero > 75) return;       
-        tablero.MarcarNumero(numero);
-        actualizarMostrador(numero);
-        tombolaGUI.getTxtNumero().setText("");
-        // CARTONES + TOMBOLA
+            tablero.MarcarNumero(numero);            
+            tombola.procesarNumero(numero);
+            //CARTONES
+        
     }
     
     /**
@@ -78,12 +69,10 @@ public class JuegoControlador {
      * @param numero
      */
     public void desmarcarNumero(int numero) {
-        if (numero < 1 || numero > 75) return;
-        
+        if (numero < 1 || numero > 75) return;       
         if (!juegoAutomatico) {
-            tablero.DesmarcarNumero(numero);
-            actualizarMostrador(-1); 
-            tombolaGUI.getTxtMostrador().setText("00");
+            tablero.DesmarcarNumero(numero);            
+            tombola.removerNumeroManual(numero);
             //CARTONES
         }
     }
@@ -93,53 +82,23 @@ public class JuegoControlador {
      */
     public void reiniciarJuego() {
         tablero.reiniciarTablero();
-        tombolaGUI.getBtnComenzar().setEnabled(true);
-        tombolaGUI.getBtnMarcar().setEnabled(false);
-        tombolaGUI.getBtnDesmarcar().setEnabled(false);
-        tombolaGUI.getBtnAutomatico().setEnabled(true);
-        tombolaGUI.getBtnManual().setEnabled(true);
-        tombolaGUI.getTxtNumero().setEnabled(false);
-        actualizarMostrador(-1);
-        generarNumeroAuto.stop();
+        tombola.reiniciarTombola();
+        juegoAutomaticoTimer.stop();
         // CARTONES + TOMBOLA
     }
     
     //PRIVADOS------------------------------------------------------------------
     
-    /**
-     * Actualiza el mostrador con el último número
-     * @param numero Número a mostrar (-1 para reset)
-     */
-    private void actualizarMostrador(int numero) {
-        if (tombolaGUI != null) {
-            if (numero == -1) {
-                tombolaGUI.getTxtMostrador().setText("00");
-                tombolaGUI.getTxtNumero().setText("");
-            } else { tombolaGUI.getTxtMostrador().setText(String.valueOf(numero));
-            }
-        }
-    }
-    
-    /**
-     * Actualiza la interfaz según el modo de juego
-     */
-    private void actualizarInterfazModo() {
-        if (tombolaGUI != null) {
-            tombolaGUI.getBtnMarcar().setEnabled(!juegoAutomatico);
-            tombolaGUI.getBtnDesmarcar().setEnabled(!juegoAutomatico);
-            tombolaGUI.getTxtNumero().setEnabled(!juegoAutomatico);           
-            }
-        }
-    
-    private Timer generarNumeroAuto = new Timer(1000, new ActionListener() {
+    private Timer juegoAutomaticoTimer = new Timer(1000, new ActionListener() {
     public void actionPerformed(ActionEvent e) {
         try {
         //Se genera un numero automatico por medio de la tombola llamando a generarNumeroAutomatico(), se asigna el numero a una variable y se da a procesarNumero(numero) para que lo marque en el tablero 
-        int numero = tombolaController.generarNumeroAutomatico();
-        procesarNumero(numero); 
+        int numero = tombola.generarNumeroAutomatico();
+            System.out.println(tombola.getTombola().getNumerosSalidos().size() + "numeros");
+        marcarNumero(numero); 
         } catch (IllegalStateException ex) {
             // Ya no hay más números disponibles para y manda un mensaje 
-            generarNumeroAuto.stop();
+            juegoAutomaticoTimer.stop();
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Tómbola vacía", JOptionPane.INFORMATION_MESSAGE);
         }
         //procesarNumero(50); //Prueba cambiar por generar numero tombola
