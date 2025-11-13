@@ -12,7 +12,7 @@ public enum EnumModoJuego {
    
     NORMAL("Juego Normal", new ReglaNormal()),
     CUATRO_ESQUINAS("Cuatro Esquinas", new ReglaCuatroEsquinas()),
-    CARTON_LLENO("Cartón Lleno", new ReglaCartonLlenol());
+    CARTON_LLENO("Cartón Lleno", new ReglaCartonLleno());
     
 
     //variable
