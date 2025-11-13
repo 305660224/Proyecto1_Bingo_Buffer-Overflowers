@@ -7,6 +7,7 @@ package Controlador;
 import Vista.TombolaGUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 /**
@@ -19,7 +20,8 @@ public class JuegoControlador {
     private TombolaGUI tombolaGUI;
     private TableroControlador tablero;
     private boolean juegoAutomatico;
-    //private TombolaControlador tombola;
+    private TombolaController tombolaController;
+
     //private Lista<CartonControlador> cartones;
     
     //GETS
@@ -38,6 +40,7 @@ public class JuegoControlador {
     
     // CONTRUCTOR
     private JuegoControlador() {
+        tombolaController = TombolaController.getInstancia();
         tombolaGUI = TombolaGUI.getInstancia();
         this.tablero = TableroControlador.getInstancia();
         //this.cartones = new ArrayList<>();
@@ -50,7 +53,13 @@ public class JuegoControlador {
     tombolaGUI.getBtnComenzar().setEnabled(false);
     tombolaGUI.getBtnAutomatico().setEnabled(false);
     tombolaGUI.getBtnManual().setEnabled(false);
-    if(juegoAutomatico) generarNumeroAuto.start();
+    if(juegoAutomatico) {
+        generarNumeroAuto.start();
+     }else {
+        tombolaGUI.getBtnMarcar().setEnabled(true);
+        tombolaGUI.getBtnDesmarcar().setEnabled(true);
+        tombolaGUI.getTxtNumero().setEnabled(true);
+    }
     }
     /**
      * Marca numero en tablero y cartones :p
@@ -124,7 +133,16 @@ public class JuegoControlador {
     
     private Timer generarNumeroAuto = new Timer(1000, new ActionListener() {
     public void actionPerformed(ActionEvent e) {
-        procesarNumero(50); //Prueba cambiar por generar numero tombola
+        try {
+        //Se genera un numero automatico por medio de la tombola llamando a generarNumeroAutomatico(), se asigna el numero a una variable y se da a procesarNumero(numero) para que lo marque en el tablero 
+        int numero = tombolaController.generarNumeroAutomatico();
+        procesarNumero(numero); 
+        } catch (IllegalStateException ex) {
+            // Ya no hay más números disponibles para y manda un mensaje 
+            generarNumeroAuto.stop();
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Tómbola vacía", JOptionPane.INFORMATION_MESSAGE);
+        }
+        //procesarNumero(50); //Prueba cambiar por generar numero tombola
       }
     });
     
