@@ -139,7 +139,7 @@ public class TableroGUI extends javax.swing.JInternalFrame {
         txt74 = new javax.swing.JTextField();
         txt75 = new javax.swing.JTextField();
         fondo = new javax.swing.JLabel();
-        btnAnterior1 = new javax.swing.JButton();
+        btnSalir = new javax.swing.JButton();
         btnAnterior = new javax.swing.JButton();
 
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -522,16 +522,16 @@ public class TableroGUI extends javax.swing.JInternalFrame {
         fondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Vista/ImgsTablero/FondoTablero.png"))); // NOI18N
         getContentPane().add(fondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
-        btnAnterior1.setBackground(new java.awt.Color(255, 0, 0));
-        btnAnterior1.setForeground(new java.awt.Color(255, 255, 255));
-        btnAnterior1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Vista/ImgsTablero/salir_icon.png"))); // NOI18N
-        btnAnterior1.setText("Salir");
-        btnAnterior1.addActionListener(new java.awt.event.ActionListener() {
+        btnSalir.setBackground(new java.awt.Color(255, 0, 0));
+        btnSalir.setForeground(new java.awt.Color(255, 255, 255));
+        btnSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Vista/ImgsTablero/salir_icon.png"))); // NOI18N
+        btnSalir.setText("Salir");
+        btnSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAnterior1ActionPerformed(evt);
+                btnSalirActionPerformed(evt);
             }
         });
-        getContentPane().add(btnAnterior1, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 220, 110, -1));
+        getContentPane().add(btnSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 220, 110, -1));
 
         btnAnterior.setBackground(new java.awt.Color(255, 0, 0));
         btnAnterior.setForeground(new java.awt.Color(255, 255, 255));
@@ -547,9 +547,9 @@ public class TableroGUI extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnAnterior1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnterior1ActionPerformed
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         this.setVisible(false);
-    }//GEN-LAST:event_btnAnterior1ActionPerformed
+    }//GEN-LAST:event_btnSalirActionPerformed
 
     private void btnAnteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnteriorActionPerformed
         
@@ -558,7 +558,7 @@ public class TableroGUI extends javax.swing.JInternalFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAnterior;
-    private javax.swing.JButton btnAnterior1;
+    private javax.swing.JButton btnSalir;
     private javax.swing.JLabel fondo;
     private javax.swing.JTextField txt1;
     private javax.swing.JTextField txt10;
