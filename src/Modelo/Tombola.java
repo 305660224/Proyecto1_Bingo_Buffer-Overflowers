@@ -40,7 +40,7 @@ public class Tombola {
             numero = numeroRandom.nextInt(75) + 1;
         } while (numerosSalidos.contains(numero));
 
-        numerosSalidos.add(numero);
+        //numerosSalidos.add(numero);
         notificarNumeroGenerado(numero);
         return numero;
     }

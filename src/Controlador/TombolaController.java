@@ -41,7 +41,7 @@ public class TombolaController {
 
     public void ingresarNumeroManual(int numero) {
         tombola.agregarNumeroManual(numero);
-        procesarNumero(numero);
+        //procesarNumero(numero);
     }
     
     public void removerNumeroManual(int numero) { //AÑADIDO
@@ -77,6 +77,17 @@ public class TombolaController {
             }
         }
     
+        /**
+     * Marca numero en tablero y cartones :p
+     * @param numero Número a procesar
+     */
+    public void procesarNumero(int numero) { //AÑADIDO    
+        if (!numeroYaSalio(numero))actualizarMostrador(numero);
+        tombolaGUI.getTxtNumero().setText("");
+        ingresarNumeroManual(numero);
+        // CARTONES + TOMBOLA
+    }
+    
     //PRIVADOS------------------------------------------------------------------
     private void reiniciarTombolaGUI() { //AÑADIDO
         tombolaGUI.getBtnComenzar().setEnabled(true);
@@ -89,15 +100,6 @@ public class TombolaController {
         actualizarMostrador(-1);
     }
     
-    /**
-     * Marca numero en tablero y cartones :p
-     * @param numero Número a procesar
-     */
-    public void procesarNumero(int numero) { //AÑADIDO    
-        actualizarMostrador(numero);
-        tombolaGUI.getTxtNumero().setText("");
-        // CARTONES + TOMBOLA
-    }
     
         /**
      * Actualiza el mostrador con el último número
