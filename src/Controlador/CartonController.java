@@ -16,6 +16,7 @@ public class CartonController {
 private ArrayList<Carton> cartonesParticipantes;
 private ReglaGanadora reglaActual;
 private boolean juegoIniciado;
+private static CartonController instancia;
 private boolean [] numerosCantados;
 private final int MAX_NUMEROS = 75;
 private Random rand;
@@ -23,10 +24,13 @@ private Random rand;
     public CartonController() {
       this.cartonesParticipantes= new ArrayList<>();
       this.juegoIniciado=false;
-      this.rand=new Random();
-      limpiarTombola();
     }
-
+    public static CartonController getInstancia(){
+        if(instancia==null){
+           instancia = new CartonController();
+        }
+        return instancia;
+    }
 public String agregarCarton(String id, boolean esAutomatico){
     if(juegoIniciado){
       return "No se pueden añadir más cartones mientras la partida esta iniciada";
@@ -49,70 +53,34 @@ public boolean eliminarCarton(String id){
     }
     return cartonesParticipantes.removeIf(c -> c.getId().equalsIgnoreCase(id));
 }
-public boolean iniciarPartida(EnumModoJuego modo){
-    if(cartonesParticipantes.isEmpty()){
-        return false;
-    }
-    this.reglaActual=modo.getRegla();
-    limpiarTombola();
-    
-    for(Carton c : cartonesParticipantes){
-        c.limpiarMarcas();
-    }
-    this.juegoIniciado = true;
-    return true;
-}
-public int cantarSiguienteNumero(){
-    if(!juegoIniciado){
-        return -1;
-    }
-    int numeroCantado = generarNuevoNumero();
-    if(numeroCantado ==-1){
-        finalizarPartida();
-        return -1;
-        
-    }
+public void marcarNumeroEnTodos(int numeroCantado){
     for(Carton carton: cartonesParticipantes){
         carton.marcarNumero(numeroCantado);
     }
-    verificarGanadores();
-    return numeroCantado;
 }
-private void limpiarTombola(){
-   this.numerosCantados = new boolean[76];
+  public void desmarcarEnTodos(int numero) {
+    for (Carton c : cartonesParticipantes) {
+        c.desmarcarNumero(numero);
+    }
 }
-private void finalizarPartida(){
+public void limpiarMarcaEnTodos(){
+     for (Carton c : cartonesParticipantes) {
+        c.limpiarMarcas();
+    }
+}
+private void finalizarPartida(){//ELIMINAR(AHI VEREMOS)
     this.juegoIniciado=false;
 }
-private void verificarGanadores(){
+public boolean verificarGanadores(ReglaGanadora regla){
    for(Carton carton: cartonesParticipantes){
        if(carton.verificarVictoria(reglaActual)){
-          finalizarPartida();
-          return;
+          return true;
        }
    }
+   return false;
 }
-private int generarNuevoNumero() {
-    int numero;
-    int contadorNumerosRestantes = 0;
-        for(int i = 1; i <= MAX_NUMEROS; i++){
-            if(!numerosCantados[i]){
-                contadorNumerosRestantes++;
-            }
-        }
-        
-        if (contadorNumerosRestantes == 0) {
-            return -1;
-        }
-       
-        do {
-            numero = rand.nextInt(MAX_NUMEROS) + 1; 
-        } while (numerosCantados[numero]);       
-        // Marcar el número como cantado
-        numerosCantados[numero] = true; 
-        return numero;
-    }
 
+    //GETS Y SETS
     public ArrayList<Carton> getCartonesParticipantes() {
         return cartonesParticipantes;
     }
@@ -120,6 +88,11 @@ private int generarNuevoNumero() {
     public boolean isJuegoIniciado() {
         return juegoIniciado;
     }
+
+    public void setJuegoIniciado(boolean juegoIniciado) {
+        this.juegoIniciado = juegoIniciado;
+    }
+    
 
     public boolean[] getNumerosCantados() {
         return numerosCantados;
