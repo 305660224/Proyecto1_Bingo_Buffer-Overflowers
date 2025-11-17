@@ -61,7 +61,7 @@ private boolean [][] matrizMarcada;
           do{
               nuevoNumero = rand.nextInt(max - min + 1) +  min;
           }while(contieneNumero(nuevoNumero));
-           this.matrizNumerica[i][j] = nuevoNumero; 
+           this.matrizNumerica[j][i] = nuevoNumero; 
           }
         }
       }

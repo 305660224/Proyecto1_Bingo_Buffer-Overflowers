@@ -6,10 +6,13 @@ package Vista;
 
 import Controlador.JuegoControlador;
 import Controlador.TombolaController;
+import Modelo.EnumModoJuego;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
+import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
@@ -21,12 +24,14 @@ public class TombolaGUI extends javax.swing.JInternalFrame {
 
     private static TombolaGUI instancia;
     TableroGUI tablero;
+    GUICrearCarton crearcarton;
     /**
      * Creates new form JuegoControladorGUI
      */
     public TombolaGUI() {
         initComponents();
         tablero = TableroGUI.getInstancia();
+        crearcarton = GUICrearCarton.getInstancia();
     }
     
     public static TombolaGUI getInstancia() {
@@ -57,7 +62,7 @@ public class TombolaGUI extends javax.swing.JInternalFrame {
         return txtMostrador;
     }
 
-    public JFormattedTextField getTxtNumero() {
+    public JTextField getTxtNumero() {
         return txtNumero;
     }
 
@@ -69,6 +74,72 @@ public class TombolaGUI extends javax.swing.JInternalFrame {
         return btnDesmarcar;
     }
        
+    public void reiniciar() {
+        btnComenzar.setEnabled(true);
+        btnAutomatico.setEnabled(true);
+        btnManual.setEnabled(true);
+        
+        btnMarcar.setEnabled(false);
+        btnDesmarcar.setEnabled(false);
+        txtNumero.setEnabled(false);
+        
+        btnJuegoCartonLleno.setEnabled(true);
+        btnJuegoCuatroEsquinas.setEnabled(true);
+        btnJuegoNormal.setEnabled(true);
+    }
+    
+    public void iniciar() {
+    btnComenzar.setEnabled(false);
+    }
+    
+    public void bloquearModoJuego() {
+    btnAutomatico.setEnabled(false);
+    btnManual.setEnabled(false);
+    
+        btnJuegoCartonLleno.setEnabled(false);
+        btnJuegoCuatroEsquinas.setEnabled(false);
+        btnJuegoNormal.setEnabled(false);
+    }
+    
+    public void limpiartxt() {
+    txtNumero.setText("");
+    }
+
+    public JRadioButton getBtnJuegoCartonLleno() {
+        return btnJuegoCartonLleno;
+    }
+
+    public JRadioButton getBtnJuegoCuatroEsquinas() {
+        return btnJuegoCuatroEsquinas;
+    }
+
+    public JRadioButton getBtnJuegoNormal() {
+        return btnJuegoNormal;
+    }
+    
+    
+    
+     /**
+     * Actualiza el mostrador con el último número
+     * @param numero Número a mostrar (-1 para reset)
+     */
+    public void actualizarMostrador(int numero) { //AÑADIDO
+            if (numero == -1) {
+                txtMostrador.setText("00");
+            } else { txtMostrador.setText(String.valueOf(numero));
+            }
+    }
+    
+     /**
+     * Actualiza la interfaz según el modo de juego
+     */
+    public void actualizarInterfazModo(boolean juegoAutomatico) { //AÑADIDO
+            btnMarcar.setEnabled(!juegoAutomatico);
+            btnDesmarcar.setEnabled(!juegoAutomatico);
+            txtNumero.setEnabled(!juegoAutomatico);           
+        }
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -79,8 +150,12 @@ public class TombolaGUI extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
+        btnJuegoNormal = new javax.swing.JRadioButton();
+        btnJuegoCuatroEsquinas = new javax.swing.JRadioButton();
+        btnJuegoCartonLleno = new javax.swing.JRadioButton();
+        txtNumero = new javax.swing.JTextField();
         txtMostrador = new javax.swing.JTextField();
-        txtNumero = new javax.swing.JFormattedTextField();
         btnMarcar = new javax.swing.JButton();
         btnDesmarcar = new javax.swing.JButton();
         btnComenzar = new javax.swing.JButton();
@@ -94,6 +169,39 @@ public class TombolaGUI extends javax.swing.JInternalFrame {
 
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        btnJuegoNormal.setBackground(new java.awt.Color(51, 51, 51));
+        buttonGroup2.add(btnJuegoNormal);
+        btnJuegoNormal.setForeground(new java.awt.Color(255, 255, 255));
+        btnJuegoNormal.setSelected(true);
+        btnJuegoNormal.setText("Normal");
+        btnJuegoNormal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnJuegoNormalActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnJuegoNormal, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 178, -1, -1));
+
+        buttonGroup2.add(btnJuegoCuatroEsquinas);
+        btnJuegoCuatroEsquinas.setForeground(new java.awt.Color(255, 255, 255));
+        btnJuegoCuatroEsquinas.setText("Cuatro Esquinas");
+        btnJuegoCuatroEsquinas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnJuegoCuatroEsquinasActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnJuegoCuatroEsquinas, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 198, -1, -1));
+
+        buttonGroup2.add(btnJuegoCartonLleno);
+        btnJuegoCartonLleno.setForeground(new java.awt.Color(255, 255, 255));
+        btnJuegoCartonLleno.setText("Carton Lleno");
+        btnJuegoCartonLleno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnJuegoCartonLlenoActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnJuegoCartonLleno, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 218, -1, -1));
+        getContentPane().add(txtNumero, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 130, 60, -1));
+
         txtMostrador.setBackground(new java.awt.Color(0, 0, 0));
         txtMostrador.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         txtMostrador.setForeground(new java.awt.Color(255, 255, 255));
@@ -101,20 +209,6 @@ public class TombolaGUI extends javax.swing.JInternalFrame {
         txtMostrador.setText("00");
         txtMostrador.setBorder(null);
         getContentPane().add(txtMostrador, new org.netbeans.lib.awtextra.AbsoluteConstraints(157, 30, -1, -1));
-
-        try {
-            txtNumero.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##")));
-        } catch (java.text.ParseException ex) {
-            ex.printStackTrace();
-        }
-        txtNumero.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtNumero.setEnabled(false);
-        txtNumero.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtNumeroActionPerformed(evt);
-            }
-        });
-        getContentPane().add(txtNumero, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 130, 60, -1));
 
         btnMarcar.setText("Marcar ");
         btnMarcar.setEnabled(false);
@@ -180,7 +274,7 @@ public class TombolaGUI extends javax.swing.JInternalFrame {
                 btnAutomaticoActionPerformed(evt);
             }
         });
-        getContentPane().add(btnAutomatico, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 180, 280, -1));
+        getContentPane().add(btnAutomatico, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 178, 160, -1));
 
         buttonGroup1.add(btnManual);
         btnManual.setSelected(true);
@@ -190,7 +284,7 @@ public class TombolaGUI extends javax.swing.JInternalFrame {
                 btnManualActionPerformed(evt);
             }
         });
-        getContentPane().add(btnManual, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 210, 280, -1));
+        getContentPane().add(btnManual, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 208, 160, -1));
 
         txt.setForeground(new java.awt.Color(255, 255, 255));
         txt.setText("Modos de juego:");
@@ -203,7 +297,7 @@ public class TombolaGUI extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCartonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCartonActionPerformed
-        
+        JuegoControlador.getInstancia().agregarCarton();
     }//GEN-LAST:event_btnCartonActionPerformed
 
     private void btnTableroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTableroActionPerformed
@@ -231,23 +325,66 @@ public class TombolaGUI extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnManualActionPerformed
 
     private void btnMarcarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMarcarActionPerformed
-        int numero = Integer.parseInt(txtNumero.getText().trim());
-        JuegoControlador.getInstancia().marcarNumero(numero);
+    String textoNumero = txtNumero.getText().trim();
+    if (textoNumero.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Debe ingresar un número para marcar.", "Error de Entrada", JOptionPane.ERROR_MESSAGE);
+        return; 
+    }
+    int numero;
+    try { 
+        numero = Integer.parseInt(textoNumero);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "El valor ingresado no es un número válido.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+        return; 
+    }
+    if (numero < 1 || numero > 75) {
+        JOptionPane.showMessageDialog(this, "El número debe estar entre 1 y 75.", "Error de Rango", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    JuegoControlador.getInstancia().marcarNumero(numero);
+    txtNumero.setText("");  
 
 // JuegoControlador.getInstancia().procesarNumero(Integer.parseInt(txtNumero.getText().trim()));
     }//GEN-LAST:event_btnMarcarActionPerformed
 
-    private void txtNumeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNumeroActionPerformed
-        int numero = Integer.parseInt(txtNumero.getText().trim());
-        JuegoControlador.getInstancia().marcarNumero(numero);
-
-//JuegoControlador.getInstancia().marcarNumero(Integer.parseInt(txtNumero.getText().trim()));
-    }//GEN-LAST:event_txtNumeroActionPerformed
-
     private void btnDesmarcarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDesmarcarActionPerformed
-       int numero = Integer.parseInt(txtNumero.getText().trim());
-        JuegoControlador.getInstancia().desmarcarNumero(numero);
+    String textoNumero = txtNumero.getText().trim();
+    if (textoNumero.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Debe ingresar un número para marcar.", "Error de Entrada", JOptionPane.ERROR_MESSAGE);
+        return; 
+    }
+    int numero;
+    try { 
+        numero = Integer.parseInt(textoNumero);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "El valor ingresado no es un número válido.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+        return; 
+    }
+    if (numero < 1 || numero > 75) {
+        JOptionPane.showMessageDialog(this, "El número debe estar entre 1 y 75.", "Error de Rango", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    JuegoControlador.getInstancia().marcarNumero(numero);
+    txtNumero.setText("");  
     }//GEN-LAST:event_btnDesmarcarActionPerformed
+
+    private void btnJuegoCuatroEsquinasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnJuegoCuatroEsquinasActionPerformed
+            if (btnJuegoCuatroEsquinas.isSelected()) {
+                JuegoControlador.getInstancia().setModoJuego(EnumModoJuego.CUATRO_ESQUINAS);
+            }
+    }//GEN-LAST:event_btnJuegoCuatroEsquinasActionPerformed
+
+    private void btnJuegoNormalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnJuegoNormalActionPerformed
+            if (btnJuegoNormal.isSelected()) {
+                JuegoControlador.getInstancia().setModoJuego(EnumModoJuego.NORMAL);
+            }
+    }//GEN-LAST:event_btnJuegoNormalActionPerformed
+
+    private void btnJuegoCartonLlenoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnJuegoCartonLlenoActionPerformed
+            if (btnJuegoCartonLleno.isSelected()) {
+                JuegoControlador.getInstancia().setModoJuego(EnumModoJuego.CARTON_LLENO);
+            }
+    }//GEN-LAST:event_btnJuegoCartonLlenoActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -256,13 +393,17 @@ public class TombolaGUI extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnCarton;
     private javax.swing.JButton btnComenzar;
     private javax.swing.JButton btnDesmarcar;
+    private javax.swing.JRadioButton btnJuegoCartonLleno;
+    private javax.swing.JRadioButton btnJuegoCuatroEsquinas;
+    private javax.swing.JRadioButton btnJuegoNormal;
     private javax.swing.JToggleButton btnManual;
     private javax.swing.JButton btnMarcar;
     private javax.swing.JButton btnReiniciar;
     private javax.swing.JButton btnTablero;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JLabel txt;
     private javax.swing.JTextField txtMostrador;
-    private javax.swing.JFormattedTextField txtNumero;
+    private javax.swing.JTextField txtNumero;
     // End of variables declaration//GEN-END:variables
 }

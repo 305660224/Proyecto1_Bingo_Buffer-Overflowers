@@ -4,6 +4,7 @@
  */
 package Controlador;
 
+import Modelo.EnumModoJuego;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
@@ -17,8 +18,11 @@ import javax.swing.Timer;
 public class JuegoControlador {
     private static JuegoControlador instancia;
     private boolean juegoAutomatico;
+    private boolean juegoIniciado;
     private TableroControlador tablero;
     private TombolaController tombola;
+    private CartonController carton;
+    private EnumModoJuego modoJuego;
 
     //private Lista<CartonControlador> cartones;
     
@@ -35,22 +39,58 @@ public class JuegoControlador {
     public void setJuegoAutomatico(boolean juegoAutomatico) {
         this.juegoAutomatico = juegoAutomatico;
     }
+
+    public void setJuegoIniciado(boolean juegoIniciado) {
+        this.juegoIniciado = juegoIniciado;
+    }    
+
+    public void setModoJuego(EnumModoJuego modoJuego) {
+        this.modoJuego = modoJuego;
+    }
+    
+    
     
     // CONTRUCTOR
     private JuegoControlador() {
         tombola = TombolaController.getInstancia();
         this.tablero = TableroControlador.getInstancia();
-        //this.cartones = new ArrayList<>();
+        this.carton = CartonController.getInstancia();
+        this.modoJuego = modoJuego.NORMAL;
     }
     
     //PUBLICOS------------------------------------------------------------------
     
     public void IniciarJuego() throws InterruptedException {
+    if (carton.getCartonesParticipantes().isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Agregue almenos un cartón!.", "No existen Cartones", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    
+    setJuegoIniciado(true);
     tombola.iniciarTombola(juegoAutomatico);
     if(juegoAutomatico) {
         juegoAutomaticoTimer.start();
      }
     }
+    
+    public void agregarCarton() {
+        tombola.bloquearModoJuego();
+        if (juegoIniciado) {
+            JOptionPane.showMessageDialog(null, "No se pueden añadir más cartones mientras la partida está iniciada", "Juego en Curso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (juegoAutomatico) {
+            // Modo automático - crear cartón automático
+            String resultado = carton.agregarCartonAutomatico();
+            carton.cerrarCrearCartonManual();
+            JOptionPane.showMessageDialog(null, resultado, "Cartón Agregado", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            // Modo manual - abrir interfaz para crear cartón manual
+            carton.abrirCrearCartonManual();
+        }
+    }
+    
     
     /**
      * Desmarca un número del tablero y cartones (solo si el juego esta en manual);
@@ -60,8 +100,8 @@ public class JuegoControlador {
         if (numero < 1 || numero > 75) return;       
             tablero.MarcarNumero(numero);            
             tombola.procesarNumero(numero);
-            //CARTONES
-        
+            carton.marcarNumeroEnTodos(numero);
+            verificarGanadores();
     }
     
     /**
@@ -73,7 +113,7 @@ public class JuegoControlador {
         if (!juegoAutomatico) {
             tablero.DesmarcarNumero(numero);            
             tombola.removerNumeroManual(numero);
-            //CARTONES
+            carton.desmarcarEnTodos(numero);
         }
     }
     
@@ -84,7 +124,28 @@ public class JuegoControlador {
         tablero.reiniciarTablero();
         tombola.reiniciarTombola();
         juegoAutomaticoTimer.stop();
-        // CARTONES + TOMBOLA
+        carton.limpiarMarcaEnTodos();
+        setJuegoIniciado(false);
+        carton.reiniciarAparienciaCartones();
+    }
+    
+        private void verificarGanadores() {
+        if (modoJuego == null) {
+            modoJuego = EnumModoJuego.NORMAL;
+        }
+        
+        // Usar el método existente pero pasarle la regla correcta
+        boolean hayGanador = carton.verificarGanadores(modoJuego.getRegla());
+        
+        if (hayGanador) {
+            // ¡Hay ganador!
+            juegoAutomaticoTimer.stop();
+            setJuegoIniciado(false);
+            
+            // Mostrar mensaje de victoria
+            String mensaje = "GANADOR!" + modoJuego.getModoJuego();
+            JOptionPane.showMessageDialog(null, mensaje, "¡BINGO!", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
     
     //PRIVADOS------------------------------------------------------------------
@@ -106,5 +167,4 @@ public class JuegoControlador {
     });
     
     }
-    
 

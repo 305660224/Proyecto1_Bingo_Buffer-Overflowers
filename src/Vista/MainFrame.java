@@ -4,6 +4,8 @@
  */
 package Vista;
 
+import javax.swing.JDesktopPane;
+
 /**
  *
  * @author ASUS
@@ -11,26 +13,42 @@ package Vista;
 public class MainFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
-
+    private static MainFrame instancia;
     TableroGUI tablero;
-    TombolaGUI juegocontrolador;
+    TombolaGUI tombola;
+    GUICrearCarton crearcarton;
     
     /**
      * Creates new form NewJFrame
      */
     public MainFrame() {
         initComponents();
+        this.setExtendedState(MainFrame.MAXIMIZED_BOTH);
             tablero = TableroGUI.getInstancia();
-            juegocontrolador = TombolaGUI.getInstancia();
+            tombola = TombolaGUI.getInstancia();
+            crearcarton = GUICrearCarton.getInstancia();
             
-            juegocontrolador.setVisible(true);
+            tombola.setVisible(true);
 
             jDesktopPane1.add(tablero);
-            jDesktopPane1.add(juegocontrolador);            
+            jDesktopPane1.add(tombola);            
+            jDesktopPane1.add(crearcarton);                                        
             this.add(jDesktopPane1);
     }
 
+    public static MainFrame getInstancia(){
+        if(instancia==null){
+           instancia = new MainFrame();
+        }
+        return instancia;
+    }
 
+    public JDesktopPane getjDesktopPane1() {
+        return jDesktopPane1;
+    }
+    
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
